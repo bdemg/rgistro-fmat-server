@@ -19,11 +19,23 @@ public class MACDevicesDAO extends DatabaseDAO {
     private final String CHECK_FOR_USER = "SELECT matricula FROM devices WHERE matricula=?";
     private final String ADD_USER_DEVICE_QUERY = "INSERT INTO devices VALUES (?, ?)";
     private final String REMOVE_USER_DEVICE_QUERY = "DELETE FROM devices WHERE deviceMAC=?";
+    
+    private static MACDevicesDAO macDevicesDAO;
 
-    public MACDevicesDAO() throws SQLException {
+    private MACDevicesDAO() throws SQLException {
+        
         super();
     }
     
+    
+    public static MACDevicesDAO getMACDevicesDAO() throws SQLException{
+        
+        if( macDevicesDAO == null ){
+            macDevicesDAO = new MACDevicesDAO();
+        }
+        
+        return macDevicesDAO;
+    }
     
     public boolean isUserRegistered(String userRegisterNumber) throws SQLException{
         
