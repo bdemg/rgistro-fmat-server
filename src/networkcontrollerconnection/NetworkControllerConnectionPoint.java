@@ -27,13 +27,13 @@ public class NetworkControllerConnectionPoint {
 
     public NetworkControllerConnectionPoint() {
         
-        this.ConnectionManager.connect();
+        System.out.println(this.ConnectionManager.connect());
     }
     
     
-    public void registerMACAddress(String MACAddressToRegister){
+    public String registerMACAddress(String MACAddressToRegister){
         
-        this.ConnectionManager.sendCommand(
+        return this.ConnectionManager.sendCommand(
             this.constructAddMACCommand( MACAddressToRegister )
         );
     }
@@ -49,9 +49,9 @@ public class NetworkControllerConnectionPoint {
     }
     
     
-    public void unlistMACAddres(String MACAddressToUnlist){
+    public String unlistMACAddres(String MACAddressToUnlist){
         
-        this.ConnectionManager.sendCommand(
+        return this.ConnectionManager.sendCommand(
             this.constructRemoveMACCommand( MACAddressToUnlist )
         );
     }
