@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class DatabaseDAO {
     
     private final String DRIVER = "com.mysql.jdbc.Driver";
-    private final String HOST = "jdbc:mysql://localhost/DBCafe?autoReconnect=true&useSSL=false";
+    private final String HOST = "jdbc:mysql://localhost/registroFMAT?autoReconnect=true&useSSL=false";
     private final String USER = "root";
     private final String PASSWORD = "rootluigi44_44";
     
