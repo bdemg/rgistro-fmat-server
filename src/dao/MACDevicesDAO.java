@@ -15,8 +15,8 @@ import java.sql.SQLException;
  */
 public class MACDevicesDAO extends DatabaseDAO {
     
-    private final String CHECK_USER_DEVICES_QUERY = "SELECT deviceMAC FROM devices WHERE matricula=?";
-    private final String CHECK_FOR_USER = "SELECT matricula FROM devices WHERE matricula=?";
+    private final String CHECK_USER_DEVICES_QUERY = "SELECT deviceMAC FROM devices WHERE RegisterNumber=?";
+    private final String CHECK_FOR_USER = "SELECT RegisterNumber FROM devices WHERE RegisterNumber=?";
     private final String ADD_USER_DEVICE_QUERY = "INSERT INTO devices VALUES (?, ?)";
     private final String REMOVE_USER_DEVICE_QUERY = "DELETE FROM devices WHERE deviceMAC=?";
     

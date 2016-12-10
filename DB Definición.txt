@@ -1,0 +1,7 @@
+CREATE DATABASE registroFMAT;
+
+CREATE TABLE devices (
+	RegisterNumber VARCHAR(9) NOT NULL,
+	DeviceMAC VARCHAR(17) NOT NULL,
+	PRIMARY KEY (RegisterNumber, DeviceMAC)
+);
