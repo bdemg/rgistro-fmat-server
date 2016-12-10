@@ -20,6 +20,8 @@ public class MACDevicesDAO extends DatabaseDAO {
     private final String ADD_USER_DEVICE_QUERY = "INSERT INTO devices VALUES (?, ?)";
     private final String REMOVE_USER_DEVICE_QUERY = "DELETE FROM devices WHERE deviceMAC=?";
     
+    private final String MAC_COLUMN_NAME = "DeviceMAC";
+    
     private static MACDevicesDAO macDevicesDAO;
 
     private MACDevicesDAO() throws SQLException {
@@ -85,5 +87,39 @@ public class MACDevicesDAO extends DatabaseDAO {
         queryStatement.setString(1, deviceMAC);
         
         queryStatement.execute();
+    }
+    
+    public String[] getUserDevices(String userRegisterNumber) throws SQLException{
+        
+        PreparedStatement queryStatement = (PreparedStatement) 
+            super.connectionToDatabase.prepareStatement( this.CHECK_USER_DEVICES_QUERY );
+        
+        queryStatement.setString(1, userRegisterNumber);
+        
+        ResultSet queryResults = queryStatement.executeQuery();
+        
+        return resultSetMACToArray(queryResults);
+    }
+    
+    
+    private String[] resultSetMACToArray(ResultSet resultSet) throws SQLException{
+        
+        int maxRows = 0;
+        if(resultSet.last()){
+            maxRows = resultSet.getRow();
+            resultSet.beforeFirst();
+        }
+        
+        String[] MACs = new String[maxRows];
+        int row = 0;
+            
+        while(resultSet.next()){
+                    
+            MACs[ row ] = resultSet.getString( this.MAC_COLUMN_NAME );
+                    
+            row++;
+        }
+        
+        return MACs;
     }
 }
