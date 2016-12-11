@@ -2,15 +2,12 @@ package server;
 
 import dao.MACDevicesDAO;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.Scanner;
-import ldapconnection.LDAPConnection;
 
 /**
  *
@@ -29,24 +26,25 @@ public class EchoThread extends Thread{
     
     @Override
     public void run(){
+        
         try {
-            // Do the thing
+            
             InputStream in = this.socket.getInputStream();
             this.buffReader = new BufferedReader(new InputStreamReader(in));
             
             String username;
-            while((username = buffReader.readLine())!=null){
+            while((username = this.buffReader.readLine())!=null){
                 break;
             }
             
             String password;
-            while((password = buffReader.readLine())!=null){
+            while((password = this.buffReader.readLine())!=null){
                 break;
             }
             
 //            LDAPConnection ldap = new LDAPConnection();
 //            boolean isFound = ldap.searchUser(username, password);
-//            
+            
             out = new DataOutputStream(this.socket.getOutputStream());
             out.writeBoolean(true);
             
@@ -69,12 +67,8 @@ public class EchoThread extends Thread{
         while(true){
             
             String code;
-//            while((code = buffReader.readLine())!=null){
-//                break;
-//            }
-            
             do{
-                code = buffReader.readLine();
+                code = this.buffReader.readLine();
             }while(code==null);
             
             switch(code){
@@ -84,7 +78,7 @@ public class EchoThread extends Thread{
                     break;
                 
                 case ServiceCodes.REQUEST_REGISTERED_MACS:
-                    this.requestRegisteredMac();
+                    this.requestRegisteredMacs();
                     break;
                 
                 case ServiceCodes.UNLIST_MAC:
@@ -102,14 +96,14 @@ public class EchoThread extends Thread{
         try {
             
             String registerNumber; 
-            while((registerNumber = buffReader.readLine())!=null){
+            while((registerNumber = this.buffReader.readLine())!=null){
                 break;
             }
             
             boolean isNumberOfDevicesInRange = MACDevicesDAO.getMACDevicesDAO().numberOfDevicesRegistered(registerNumber) < 2;
             if( isNumberOfDevicesInRange ){
                 
-                String deviceMac = buffReader.readLine();
+                String deviceMac = this.buffReader.readLine();
                 MACDevicesDAO.getMACDevicesDAO().addUserDevice(registerNumber, deviceMac);
                 
                 // *** Conexión con el controlador aún no funciona ***
@@ -127,12 +121,38 @@ public class EchoThread extends Thread{
         
     }
 
-    private void requestRegisteredMac() {
+    private void requestRegisteredMacs() throws IOException {
         
+        try {
+            
+            String userRegisterNumber;
+            do{
+                userRegisterNumber = this.buffReader.readLine();
+            }while(userRegisterNumber == null);
+            
+            String[] registeredMacs = MACDevicesDAO.getMACDevicesDAO().getUserDevices(userRegisterNumber);
+            
+            // return registeredMacs;
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
-    private void unlistMac() {
+    private void unlistMac() throws IOException {
         
+        try {
+            
+            String deviceMac;
+            do{
+                deviceMac = this.buffReader.readLine();
+            }while(deviceMac == null);
+            
+            MACDevicesDAO.getMACDevicesDAO().removeUserDevice(deviceMac);
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
     
 }
