@@ -8,7 +8,7 @@ import java.net.Socket;
  *
  * @author Antonio Soto
  */
-public class ThreadedEchoServer {
+public class ClientListener {
 
     private static final int PORT = 8086;
 
@@ -32,7 +32,7 @@ public class ThreadedEchoServer {
             }
             
             // Creates new thread for a client.
-            new EchoThread(socket).start();
+            new RegistryServerThread(socket).start();
         }
     }
 

@@ -15,13 +15,13 @@ import networkcontrollerconnection.NetworkControllerConnectionPoint;
  *
  * @author Antonio Soto
  */
-public class EchoThread extends Thread{
+public class RegistryServerThread extends Thread{
     
     protected Socket socket;
     protected BufferedReader buffReader;
     protected DataOutputStream out;
     
-    public EchoThread( Socket clientSocket ){
+    public RegistryServerThread( Socket clientSocket ){
         
         this.socket = clientSocket;
     }

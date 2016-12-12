@@ -1,7 +1,7 @@
 
 package entrypoints;
 
-import server.ThreadedEchoServer;
+import server.ClientListener;
 
 /**
  *
@@ -14,7 +14,7 @@ public class test_Server {
      */
     public static void main(String[] args) {
         
-        ThreadedEchoServer tes = new ThreadedEchoServer();
+        ClientListener tes = new ClientListener();
         tes.initializeServer();
         
     }
