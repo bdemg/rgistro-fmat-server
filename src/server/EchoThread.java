@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.SQLException;
 import networkcontrollerconnection.NetworkControllerConnectionPoint;
@@ -132,7 +133,33 @@ public class EchoThread extends Thread{
             
             String[] registeredMacs = MACDevicesDAO.getMACDevicesDAO().getUserDevices(userRegisterNumber);
             
-            // return registeredMacs;
+            PrintWriter outputSocket = new PrintWriter(this.socket.getOutputStream());
+            
+            if(registeredMacs.length==2){
+                
+                outputSocket.println(registeredMacs[0]);
+                outputSocket.flush();
+                
+                outputSocket.println(registeredMacs[1]);
+                outputSocket.flush();
+            }
+            else if(registeredMacs.length==1){
+                
+                outputSocket.println(registeredMacs[0]);
+                outputSocket.flush();
+                
+                outputSocket.println(" ");
+                outputSocket.flush();
+            }
+            else{
+                
+                outputSocket.println(" ");
+                outputSocket.flush();
+                
+                outputSocket.println(" ");
+                outputSocket.flush();
+            }
+            
             
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -149,6 +176,10 @@ public class EchoThread extends Thread{
             }while(deviceMac == null);
             
             MACDevicesDAO.getMACDevicesDAO().removeUserDevice(deviceMac);
+            
+            NetworkControllerConnectionPoint nwc = new NetworkControllerConnectionPoint();
+            nwc.unlistMACAddres(deviceMac);
+            nwc.close();
             
         } catch (SQLException ex) {
             ex.printStackTrace();
