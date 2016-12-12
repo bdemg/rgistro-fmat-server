@@ -116,8 +116,8 @@ public class SSHManager {
             
             channel.connect();
             
-            commander.print("rys2016\n");
-            commander.print("2016RyS\n");
+            commander.print(NetworkControllerConnectionPoint.NETWORK_CONTROLLER_USERNAME + "\n");
+            commander.print(NetworkControllerConnectionPoint.NETWORK_CONTROLLER_PASSWORD + "\n");
             commander.print(command + "\n");
             commander.close();
             

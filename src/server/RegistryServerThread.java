@@ -4,7 +4,6 @@ import dao.MACDevicesDAO;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -18,8 +17,18 @@ import networkcontrollerconnection.NetworkControllerConnectionPoint;
 public class RegistryServerThread extends Thread{
     
     protected Socket socket;
-    protected BufferedReader buffReader;
-    protected DataOutputStream out;
+    protected BufferedReader clientInputReader;
+    protected DataOutputStream dataOutput;
+    
+    private final String EMPTY = " ";
+    
+    private final int MAX_NUMBERED_OF_REGISTERED_DEVICES = 2;
+    
+    private final int TWO_REGISTERED_MACS = 2;
+    private final int ONE_REGISTERED_MAC = 1;
+    
+    private final int FIRST_MAC = 0;
+    private final int SECOND_MAC = 1;
     
     public RegistryServerThread( Socket clientSocket ){
         
@@ -31,24 +40,25 @@ public class RegistryServerThread extends Thread{
         
         try {
             
-            InputStream in = this.socket.getInputStream();
-            this.buffReader = new BufferedReader(new InputStreamReader(in));
+            this.clientInputReader = new BufferedReader(
+                    new InputStreamReader(this.socket.getInputStream())
+            );
             
             String username;
-            while((username = this.buffReader.readLine())!=null){
+            while((username = this.clientInputReader.readLine())!=null){
                 break;
             }
             
             String password;
-            while((password = this.buffReader.readLine())!=null){
+            while((password = this.clientInputReader.readLine())!=null){
                 break;
             }
             
 //            LDAPConnection ldap = new LDAPConnection();
 //            boolean isFound = ldap.searchUser(username, password);
             
-            out = new DataOutputStream(this.socket.getOutputStream());
-            out.writeBoolean(true);
+            dataOutput = new DataOutputStream(this.socket.getOutputStream());
+            dataOutput.writeBoolean(true);
             
             if(true){
                 //Se lee y se manda el email
@@ -68,12 +78,12 @@ public class RegistryServerThread extends Thread{
         
         while(true){
             
-            String code;
+            String serviceCode;
             do{
-                code = this.buffReader.readLine();
-            }while(code==null);
+                serviceCode = this.clientInputReader.readLine();
+            }while(serviceCode==null);
             
-            switch(code){
+            switch(serviceCode){
                 
                 case ServiceCodes.REGISTER_MAC:
                     this.registerMac();
@@ -98,19 +108,23 @@ public class RegistryServerThread extends Thread{
         try {
             
             String registerNumber; 
-            while((registerNumber = this.buffReader.readLine())!=null){
+            while((registerNumber = this.clientInputReader.readLine())!=null){
                 break;
             }
             
-            boolean isNumberOfDevicesInRange = MACDevicesDAO.getMACDevicesDAO().numberOfDevicesRegistered(registerNumber) < 2;
+            boolean isNumberOfDevicesInRange = MACDevicesDAO.getMACDevicesDAO().
+                    numberOfDevicesRegistered(registerNumber) < 
+                    this.MAX_NUMBERED_OF_REGISTERED_DEVICES;
+            
             if( isNumberOfDevicesInRange ){
                 
-                String deviceMac = this.buffReader.readLine();
+                String deviceMac = this.clientInputReader.readLine();
                 MACDevicesDAO.getMACDevicesDAO().addUserDevice(registerNumber, deviceMac);
                 
-                NetworkControllerConnectionPoint nwc = new NetworkControllerConnectionPoint();
-                nwc.registerMACAddress(deviceMac);
-                nwc.close();
+                NetworkControllerConnectionPoint controllerConnection = 
+                        new NetworkControllerConnectionPoint();
+                controllerConnection.registerMACAddress(deviceMac);
+                controllerConnection.close();
             }
             
         } catch (IOException ex) {
@@ -128,35 +142,35 @@ public class RegistryServerThread extends Thread{
             
             String userRegisterNumber;
             do{
-                userRegisterNumber = this.buffReader.readLine();
+                userRegisterNumber = this.clientInputReader.readLine();
             }while(userRegisterNumber == null);
             
             String[] registeredMacs = MACDevicesDAO.getMACDevicesDAO().getUserDevices(userRegisterNumber);
             
             PrintWriter outputSocket = new PrintWriter(this.socket.getOutputStream());
             
-            if(registeredMacs.length==2){
+            if( registeredMacs.length == this.TWO_REGISTERED_MACS ){
                 
-                outputSocket.println(registeredMacs[0]);
+                outputSocket.println( registeredMacs[ this.FIRST_MAC ] );
                 outputSocket.flush();
                 
-                outputSocket.println(registeredMacs[1]);
+                outputSocket.println( registeredMacs[ this.SECOND_MAC ] );
                 outputSocket.flush();
             }
-            else if(registeredMacs.length==1){
+            else if( registeredMacs.length == this.ONE_REGISTERED_MAC ){
                 
-                outputSocket.println(registeredMacs[0]);
+                outputSocket.println( registeredMacs[ this.FIRST_MAC ] );
                 outputSocket.flush();
                 
-                outputSocket.println(" ");
+                outputSocket.println( this.EMPTY );
                 outputSocket.flush();
             }
             else{
                 
-                outputSocket.println(" ");
+                outputSocket.println( this.EMPTY );
                 outputSocket.flush();
                 
-                outputSocket.println(" ");
+                outputSocket.println( this.EMPTY );
                 outputSocket.flush();
             }
             
@@ -172,14 +186,14 @@ public class RegistryServerThread extends Thread{
             
             String deviceMac;
             do{
-                deviceMac = this.buffReader.readLine();
+                deviceMac = this.clientInputReader.readLine();
             }while(deviceMac == null);
             
             MACDevicesDAO.getMACDevicesDAO().removeUserDevice(deviceMac);
             
-            NetworkControllerConnectionPoint nwc = new NetworkControllerConnectionPoint();
-            nwc.unlistMACAddres(deviceMac);
-            nwc.close();
+            NetworkControllerConnectionPoint controllerConnection = new NetworkControllerConnectionPoint();
+            controllerConnection.unlistMACAddres(deviceMac);
+            controllerConnection.close();
             
         } catch (SQLException ex) {
             ex.printStackTrace();

@@ -16,9 +16,11 @@ import java.sql.SQLException;
 public class MACDevicesDAO extends DatabaseDAO {
     
     private final String CHECK_USER_DEVICES_QUERY = "SELECT deviceMAC FROM devices WHERE RegisterNumber=?";
-    private final String CHECK_FOR_USER = "SELECT RegisterNumber FROM devices WHERE RegisterNumber=?";
     private final String ADD_USER_DEVICE_QUERY = "INSERT INTO devices VALUES (?, ?)";
     private final String REMOVE_USER_DEVICE_QUERY = "DELETE FROM devices WHERE deviceMAC=?";
+    
+    private final int FIRST_QUERY_VALUE = 1;
+    private final int SECOND_QUERY_VALUE = 2;
     
     private final String MAC_COLUMN_NAME = "DeviceMAC";
     
@@ -39,26 +41,13 @@ public class MACDevicesDAO extends DatabaseDAO {
         return macDevicesDAO;
     }
     
-    public boolean isUserRegistered(String userRegisterNumber) throws SQLException{
-        
-        PreparedStatement queryStatement = (PreparedStatement) 
-            super.connectionToDatabase.prepareStatement( this.CHECK_FOR_USER );
-        
-        queryStatement.setString(1, userRegisterNumber);
-        
-        ResultSet queryResults = queryStatement.executeQuery();
-        
-        boolean  isRegistered = queryResults.last();
-        return isRegistered;
-    }
-    
     
     public int numberOfDevicesRegistered(String userRegisterNumber) throws SQLException{
         
         PreparedStatement queryStatement = (PreparedStatement) 
             super.connectionToDatabase.prepareStatement( this.CHECK_USER_DEVICES_QUERY );
         
-        queryStatement.setString(1, userRegisterNumber);
+        queryStatement.setString( this.FIRST_QUERY_VALUE, userRegisterNumber );
         
         ResultSet queryResults = queryStatement.executeQuery();
         
@@ -72,8 +61,8 @@ public class MACDevicesDAO extends DatabaseDAO {
         PreparedStatement queryStatement = (PreparedStatement) 
             super.connectionToDatabase.prepareStatement( this.ADD_USER_DEVICE_QUERY );
         
-        queryStatement.setString(1, userRegisterNumber);
-        queryStatement.setString(2, deviceMAC);
+        queryStatement.setString( this.FIRST_QUERY_VALUE, userRegisterNumber );
+        queryStatement.setString( this.SECOND_QUERY_VALUE, deviceMAC );
         
         queryStatement.execute();
     }
@@ -84,7 +73,7 @@ public class MACDevicesDAO extends DatabaseDAO {
         PreparedStatement queryStatement = (PreparedStatement) 
             super.connectionToDatabase.prepareStatement( this.REMOVE_USER_DEVICE_QUERY );
         
-        queryStatement.setString(1, deviceMAC);
+        queryStatement.setString( this.FIRST_QUERY_VALUE, deviceMAC );
         
         queryStatement.execute();
     }
@@ -94,7 +83,7 @@ public class MACDevicesDAO extends DatabaseDAO {
         PreparedStatement queryStatement = (PreparedStatement) 
             super.connectionToDatabase.prepareStatement( this.CHECK_USER_DEVICES_QUERY );
         
-        queryStatement.setString(1, userRegisterNumber);
+        queryStatement.setString( this.FIRST_QUERY_VALUE, userRegisterNumber );
         
         ResultSet queryResults = queryStatement.executeQuery();
         

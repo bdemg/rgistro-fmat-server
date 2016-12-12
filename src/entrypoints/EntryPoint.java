@@ -7,15 +7,15 @@ import server.ClientListener;
  *
  * @author José
  */
-public class test_Server {
+public class EntryPoint {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         
-        ClientListener tes = new ClientListener();
-        tes.initializeServer();
+        ClientListener clientListener = new ClientListener();
+        clientListener.initializeServer();
         
     }
     

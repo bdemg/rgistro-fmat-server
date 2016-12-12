@@ -12,16 +12,16 @@ package networkcontrollerconnection;
 public class NetworkControllerConnectionPoint {
     
     private final String IP = "192.168.69.18";
-    private final String USERNAME = "rys2016";
-    private final String PASSWORD = "2016RyS";
+    protected static final String NETWORK_CONTROLLER_USERNAME = "rys2016";
+    protected static final String NETWORK_CONTROLLER_PASSWORD = "2016RyS";
     private final int SSH_PORT = 22;
     
-    private final SSHManager ConnectionManager = new SSHManager(this.USERNAME, this.PASSWORD, this.IP, "", this.SSH_PORT);
+    private final SSHManager ConnectionManager = new SSHManager(this.NETWORK_CONTROLLER_USERNAME, this.NETWORK_CONTROLLER_PASSWORD, this.IP, "", this.SSH_PORT);
     
     private final String ADD_DEVICE_COMMAND = "config macfilter add";
     private final String REMOVE_DEVICE_COMMAND = "config macfilter delete";
     private final String NETWORK_ID_NUMBER = "6";
-    private final String WIFI_NAME = "wl-labs"; 
+    private final String INTERFACE_NAME = "wl-labs"; 
     private final String WIFI_DESCRIPTION = "\"Red WIFI D RyS 2016\"";
     
 
@@ -46,7 +46,7 @@ public class NetworkControllerConnectionPoint {
         return this.ADD_DEVICE_COMMAND + " " +
                 MACAddressToRegister + " " +
                 this.NETWORK_ID_NUMBER + " " +
-                this.WIFI_NAME + " " +
+                this.INTERFACE_NAME + " " +
                 this.WIFI_DESCRIPTION;
     }
     
@@ -61,11 +61,7 @@ public class NetworkControllerConnectionPoint {
     
     private String constructRemoveMACCommand(String MACAddressToUnlist) {
         
-        return this.REMOVE_DEVICE_COMMAND + " " +
-                MACAddressToUnlist;// + " " +
-//                this.NETWORK_ID_NUMBER + " " +
-//                this.WIFI_NAME + " " +
-//                this.WIFI_DESCRIPTION;
+        return this.REMOVE_DEVICE_COMMAND + " " + MACAddressToUnlist;
     }
     
     
