@@ -6,7 +6,7 @@
 package entrypoints;
 
 import java.util.Scanner;
-import ldapconnection.LDAPConnection;
+import ldap.LDAPConnection;
 
 /**
  *

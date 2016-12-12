@@ -1,4 +1,4 @@
-package ldapconnection;
+package ldap;
 
 import java.util.Hashtable;
 import javax.naming.Context;

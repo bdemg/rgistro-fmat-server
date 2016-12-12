@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.SQLException;
+import ldap.LDAPConnection;
 import networkcontrollerconnection.NetworkControllerConnectionPoint;
 
 /**
@@ -54,14 +55,20 @@ public class RegistryServerThread extends Thread{
                 break;
             }
             
-//            LDAPConnection ldap = new LDAPConnection();
-//            boolean isFound = ldap.searchUser(username, password);
+            LDAPConnection ldap = new LDAPConnection();
+            boolean isFound = ldap.searchUser(username, password);
             
             dataOutput = new DataOutputStream(this.socket.getOutputStream());
-            dataOutput.writeBoolean(true);
+            dataOutput.writeBoolean(isFound);
             
-            if(true){
-                //Se lee y se manda el email
+            if(isFound){
+                
+                PrintWriter outputSocket = new PrintWriter(this.socket.getOutputStream());
+                
+                outputSocket.println(ldap.getUsername());
+                outputSocket.flush();
+                outputSocket.println(ldap.getUserEmail());
+                outputSocket.flush();
                 
                 this.mainLoop();
             }
