@@ -21,20 +21,22 @@ public class NetworkControllerConnectionPoint {
     private final String ADD_DEVICE_COMMAND = "config macfilter add";
     private final String REMOVE_DEVICE_COMMAND = "config macfilter delete";
     private final String NETWORK_ID_NUMBER = "6";
-    private final String WIFI_NAME = "wifi-rys2016-d"; 
+    private final String WIFI_NAME = "wl-labs"; 
     private final String WIFI_DESCRIPTION = "\"Red WIFI D RyS 2016\"";
     
 
     public NetworkControllerConnectionPoint() {
         
-        System.out.println(this.ConnectionManager.connect());
+            this.ConnectionManager.connect();
     }
     
     
-    public String registerMACAddress(String MACAddressToRegister){
+    public void registerMACAddress(String MACAddressToRegister){
         
-        return this.ConnectionManager.sendCommand(
-            this.constructAddMACCommand( MACAddressToRegister )
+        String command = this.constructAddMACCommand( MACAddressToRegister );
+        
+        this.ConnectionManager.sendCommand(
+            command
         );
     }
 
@@ -49,9 +51,9 @@ public class NetworkControllerConnectionPoint {
     }
     
     
-    public String unlistMACAddres(String MACAddressToUnlist){
+    public void unlistMACAddres(String MACAddressToUnlist){
         
-        return this.ConnectionManager.sendCommand(
+        this.ConnectionManager.sendCommand(
             this.constructRemoveMACCommand( MACAddressToUnlist )
         );
     }
@@ -60,10 +62,10 @@ public class NetworkControllerConnectionPoint {
     private String constructRemoveMACCommand(String MACAddressToUnlist) {
         
         return this.REMOVE_DEVICE_COMMAND + " " +
-                MACAddressToUnlist + " " +
-                this.NETWORK_ID_NUMBER + " " +
-                this.WIFI_NAME + " " +
-                this.WIFI_DESCRIPTION;
+                MACAddressToUnlist;// + " " +
+//                this.NETWORK_ID_NUMBER + " " +
+//                this.WIFI_NAME + " " +
+//                this.WIFI_DESCRIPTION;
     }
     
     

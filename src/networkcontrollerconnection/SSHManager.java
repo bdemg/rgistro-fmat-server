@@ -8,16 +8,17 @@ package networkcontrollerconnection;
 import com.jcraft.jsch.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
-  * SSHManager
-  * 
-  * @author cabbott
-  * @version 1.0
-  */
-
+ * SSHManager
+ *
+ * @author cabbott
+ * @version 1.0
+ */
 public class SSHManager {
 
     private static final Logger LOGGER
@@ -76,7 +77,7 @@ public class SSHManager {
             sesConnection = jschSSHChannel.getSession(strUserName,
                     strConnectionIP, intConnectionPort);
             sesConnection.setPassword(strPassword);
-        // UNCOMMENT THIS FOR TESTING PURPOSES, BUT DO NOT USE IN PRODUCTION
+            // UNCOMMENT THIS FOR TESTING PURPOSES, BUT DO NOT USE IN PRODUCTION
             sesConnection.setConfig("StrictHostKeyChecking", "no");
             sesConnection.connect(intTimeOut);
         } catch (JSchException jschX) {
@@ -104,31 +105,32 @@ public class SSHManager {
         return warnMessage;
     }
 
-    public String sendCommand(String command) {
-        StringBuilder outputBuffer = new StringBuilder();
-
+    public void sendCommand(String command) {
         try {
-            Channel channel = sesConnection.openChannel("exec");
-            ((ChannelExec) channel).setCommand(command);
-            InputStream commandOutput = channel.getInputStream();
+            Channel channel = this.sesConnection.openChannel("shell");
+            
+            OutputStream inputstream_for_the_channel = channel.getOutputStream();
+            PrintStream commander = new PrintStream(inputstream_for_the_channel, true);
+            
+            channel.setOutputStream(System.out, true);
+            
             channel.connect();
-            int readByte = commandOutput.read();
-
-            while (readByte != 0xffffffff) {
-                outputBuffer.append((char) readByte);
-                readByte = commandOutput.read();
-            }
-
-            channel.disconnect();
-        } catch (IOException ioX) {
-            logWarning(ioX.getMessage());
-            return null;
-        } catch (JSchException jschX) {
-            logWarning(jschX.getMessage());
-            return null;
+            
+            commander.print("rys2016\n");
+            commander.print("2016RyS\n");
+            commander.print(command + "\n");
+            commander.close();
+            
+            Thread.sleep(1000);
+            
+            this.close();
+        } catch (JSchException ex) {
+            Logger.getLogger(SSHManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(SSHManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SSHManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return outputBuffer.toString();
     }
 
     public void close() {

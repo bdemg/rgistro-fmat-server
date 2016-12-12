@@ -18,6 +18,8 @@ public class SSHTest {
         
         NetworkControllerConnectionPoint NWC = new NetworkControllerConnectionPoint();
         
+        NWC.registerMACAddress("F8:A9:D0:7F:EA:0E");
+        
         NWC.close();
     }
             

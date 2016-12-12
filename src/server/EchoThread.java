@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.sql.SQLException;
+import networkcontrollerconnection.NetworkControllerConnectionPoint;
 
 /**
  *
@@ -106,10 +107,9 @@ public class EchoThread extends Thread{
                 String deviceMac = this.buffReader.readLine();
                 MACDevicesDAO.getMACDevicesDAO().addUserDevice(registerNumber, deviceMac);
                 
-                // *** Conexión con el controlador aún no funciona ***
-//                NetworkControllerConnectionPoint nwc = new NetworkControllerConnectionPoint();
-//                nwc.registerMACAddress(registerNumber);
-//                nwc.close();
+                NetworkControllerConnectionPoint nwc = new NetworkControllerConnectionPoint();
+                nwc.registerMACAddress(deviceMac);
+                nwc.close();
             }
             
         } catch (IOException ex) {
