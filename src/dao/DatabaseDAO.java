@@ -13,7 +13,7 @@ public class DatabaseDAO {
     private final String DRIVER = "com.mysql.jdbc.Driver";
     private final String HOST = "jdbc:mysql://localhost/registroFMAT?autoReconnect=true&useSSL=false";
     private final String USER = "root";
-    private final String PASSWORD = "rootluigi44_44";
+    private final String PASSWORD = "2016rys#.";
     
     protected Connection connectionToDatabase = null;
     
